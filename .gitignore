@@ -130,3 +130,9 @@ dmypy.json
 
 # dont synch the following folders 
 /data
+
+# dont synch the following files 
+*.tmp
+*.json
+*.tsv
+*.tfevents

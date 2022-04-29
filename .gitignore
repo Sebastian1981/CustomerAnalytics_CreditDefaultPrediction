@@ -130,6 +130,8 @@ dmypy.json
 
 # dont synch the following folders 
 /data
+/data_preprocessed
+/models
 
 # dont synch the following files 
 *.tmp

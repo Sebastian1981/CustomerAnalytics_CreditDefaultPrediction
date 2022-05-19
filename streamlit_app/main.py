@@ -1,4 +1,3 @@
-from operator import index
 import os
 from pathlib import Path
 import joblib
@@ -8,7 +7,8 @@ import streamlit as st
 
 # set paths
 rootdir = os.getcwd()
-MODELPATH = Path(rootdir).parents[0] / 'models'
+MODELPATH = Path(rootdir) / 'model'
+
 # load pipeline
 with open(MODELPATH / 'pipeline.pkl','rb') as f:
     pipeline = joblib.load(f)
@@ -52,9 +52,6 @@ if uploaded_file is not None:
     # convert data to csv
     csv = convert_df(df) 
     st.download_button(label="Download data as CSV", data=csv, file_name='data_scored.csv', mime='text/csv')
-
-
-
 
 else:
     st.warning("You need to upload a csv file.")

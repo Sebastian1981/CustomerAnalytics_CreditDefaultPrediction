@@ -6,8 +6,8 @@ import pandas as pd
 
 # set paths
 rootdir = os.getcwd()
-DATAPROCESSEDPATH = Path(rootdir).parents[0] / 'data_preprocessed'
-MODELPATH = Path(rootdir).parents[0] / 'models'
+DATAPROCESSEDPATH = Path(rootdir) / 'data'
+MODELPATH = Path(rootdir) / 'model'
 
 
 # load training dataset

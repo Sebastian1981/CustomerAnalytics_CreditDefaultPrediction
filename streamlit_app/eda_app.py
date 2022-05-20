@@ -15,6 +15,7 @@ def run_eda_app():
     choice = st.sidebar.selectbox("SubMenu", submenu)
     
     if choice == "upload data file":
+        st.subheader('Upload Your Dataset.')
         uploaded_file = st.file_uploader("Choose a file")
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)

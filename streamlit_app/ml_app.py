@@ -58,6 +58,9 @@ def run_ml_app():
             joblib.dump(X_test, DATAPATH / 'X_test.pkl')
             joblib.dump(y_train, DATAPATH / 'y_train.pkl')
             joblib.dump(y_test, DATAPATH / 'y_test.pkl')
+            # save numeric and categorical feature names
+            joblib.dump(num_features, MODELPATH / 'num_features.pkl')
+            joblib.dump(cat_features, MODELPATH / 'cat_features.pkl')
         
 
     elif choice == 'train model':
@@ -77,10 +80,11 @@ def run_ml_app():
         elif choice == 'RANDOMFOREST':
             classifier = RandomForestClassifier(random_state=seed, class_weight='balanced')
 
-        # Define preprocessing for numeric columns (normalize them so they're on the same scale)
-        numeric_features = list(np.arange(0,3)) # note that numbers are required here, not names!
-        # Define preprocessing for categorical features (e.g. encode the Age column)
-        categorical_features = list(np.arange(3,17))
+        # load features
+        with open(MODELPATH / 'num_features.pkl','rb') as f:
+            num_features = joblib.load(f)
+        with open(MODELPATH / 'cat_features.pkl','rb') as f:
+            cat_features = joblib.load(f)
 
         # setup the pipeline elements
         numeric_transformer = Pipeline(steps=[
@@ -97,15 +101,15 @@ def run_ml_app():
 
         # Combine preprocessing steps
         preprocessor = ColumnTransformer(transformers=[
-                                                    ('num', numeric_transformer, numeric_features), 
-                                                    ('cat', categorical_transformer, categorical_features)
+                                                    ('num', numeric_transformer, num_features), 
+                                                    ('cat', categorical_transformer, cat_features)
                                                     ], remainder='drop'
                                         )
 
         # Create preprocessing and training pipeline
         pipeline = Pipeline(steps=[
                                 ('preprocessor', preprocessor),
-                                ('gbc', classifier)
+                                ('classifier', classifier)
                                 ]
                             )
 
@@ -113,13 +117,18 @@ def run_ml_app():
         if st.button('fit model'):
             # load data
             with open(DATAPATH / 'X_train.pkl','rb') as f:
-                X_train = joblib.load(f)
+                df_train = joblib.load(f)
             with open(DATAPATH / 'y_train.pkl','rb') as f:
                 y_train = joblib.load(f)
-            
+            # load features
+            with open(MODELPATH / 'num_features.pkl','rb') as f:
+                num_features = joblib.load(f)
+            with open(MODELPATH / 'cat_features.pkl','rb') as f:
+                cat_features = joblib.load(f)
+             
             # fit model
             with st.spinner('Wait for model to be trained...'):
-                pipeline.fit(X_train, y_train)
+                pipeline.fit(df_train[num_features + cat_features], y_train)
             st.success('Done!')
             
             # save model
@@ -131,20 +140,18 @@ def run_ml_app():
             # load data
             with open(DATAPATH / 'df_test.pkl','rb') as f:
                 df = joblib.load(f)
-            
-            # seperate into numerical and categorical features
-            num_features = list(df.dtypes[(df.dtypes == 'int64') | (df.dtypes == 'float64')].index[2:-1])
-            cat_features = list(df.dtypes[df.dtypes == 'object'].index)
-
-            # get feature array
-            X = df[num_features + cat_features]
+            # load features
+            with open(MODELPATH / 'num_features.pkl','rb') as f:
+                num_features = joblib.load(f)
+            with open(MODELPATH / 'cat_features.pkl','rb') as f:
+                cat_features = joblib.load(f)
 
             # load pipeline
             with open(MODELPATH / 'pipeline.pkl','rb') as f:
                 pipeline = joblib.load(f)
 
             # make predictions
-            y_scores = pipeline.predict_proba(X)
+            y_scores = pipeline.predict_proba(df[num_features + cat_features])
             print('predicted credit default scores: ', y_scores[:,1])
             
             # append predictions to df

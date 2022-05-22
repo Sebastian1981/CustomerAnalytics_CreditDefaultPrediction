@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 from pathlib import Path
+import numpy as np
 import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
@@ -13,14 +14,19 @@ Path(DATAPATH).mkdir(parents=True, exist_ok=True)
 def run_eda_app():
     submenu = ["upload data file", "descriptive stats", "data types", "target distribution", "feature distribution"]
     choice = st.sidebar.selectbox("SubMenu", submenu)
-    
+
     if choice == "upload data file":
         st.subheader('Upload Your Dataset.')
         uploaded_file = st.file_uploader("Choose a file")
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
+            st.write('Reduce number rows to increase speed.')
+            frac_rows = st.slider('Select percentage of data rows',10,100)
+            nrows = int(df.shape[0] * frac_rows/100)
+            df = df.sample(nrows)
             joblib.dump(df, DATAPATH / 'data.pkl')
             st.dataframe(df.head())
+            st.write('The dataset contains {} rows.'.format(df.shape[0]))
 
     elif choice == "descriptive stats":
         st.subheader('Descriptive Statistics')

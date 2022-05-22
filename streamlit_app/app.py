@@ -40,7 +40,7 @@ from eda_app import run_eda_app
 #from config_app import run_config_app
 from ml_app import run_ml_app
 from eval_app import run_eval_app
-#from explain_app import run_explain_app
+from explain_app import run_explain_app
 
 import logging
 import sys
@@ -94,7 +94,12 @@ def main():
         st.subheader("Model Evaluation")
         run_eval_app()
         logging.info("running eval app.")
-    
+
+    elif choice == "Explain":
+        st.subheader("Model Explanation")
+        run_explain_app()
+        logging.info("running explain app.")
+        
         
 
     

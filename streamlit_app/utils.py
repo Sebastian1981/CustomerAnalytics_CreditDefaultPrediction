@@ -2,10 +2,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import joblib
+from sklearn.pipeline import Pipeline
 
 def convert_df(df):
     """Convert dataframe to csv"""
     return df.to_csv(index=False).encode('utf-8')
+
+def get_categorical_feature_names_encoded(pipeline:Pipeline, hotencoding_label:str, categorical_feature_names:list):
+    """Get the names of categorical features after being hotencoded in a sklearn pipeline. 
+        Pass in the pipeline object, the label of the one-hotencoding step in the pipeline. 
+        Also pass in the names of the categorical feautures before the one-hot-encoding.
+        Watchout: the code is little instable since the hard-coded transformers list: transformers_[1][1]. U might need to adapt this!"""
+    return list(pipeline.named_steps['preprocessor'].transformers_[1][1].named_steps[hotencoding_label].get_feature_names_out(categorical_feature_names))    
 
 def plot_num_feature_distribution(df:pd.DataFrame, num_feature:str):
             """show distribution and boxplots for a given numeric feature."""
@@ -43,7 +51,4 @@ def plot_target_distribution(df, target_label:str='Status'):
     ax.set_title('credit default distribution', fontdict={'fontsize': 12, 'fontweight': 'medium'})
     return fig
 
-def load_pipeline(PATH, pipeline_name:str):
-    with open(PATH / pipeline_name,'rb') as f:
-        pipeline = joblib.load(f)
-    return pipeline        
+   

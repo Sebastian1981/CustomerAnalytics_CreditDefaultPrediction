@@ -18,6 +18,11 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import MinMaxScaler
 
+from sklearn.model_selection import StratifiedKFold
+from sklearn.feature_selection import RFECV
+from sklearn.metrics import make_scorer
+from sklearn.metrics import roc_auc_score
+
 
 rootdir = os.getcwd()
 DATAPATH = Path(rootdir) / 'data'
@@ -72,13 +77,20 @@ def run_ml_app():
         choice = st.selectbox("Classifiers", classifiers)
         
         if choice == 'LGBM':
-            classifier = LGBMClassifier(random_state=seed, lass_weight='balanced')
+            classifier = LGBMClassifier(random_state=seed, class_weight='balanced')
         elif choice == 'XGBOOST':
             classifier = XGBClassifier(random_state=seed, scale_pos_weight=10)
         elif choice == 'LOGREG':
             classifier = LogisticRegression(random_state=seed, max_iter=100000, class_weight='balanced')
         elif choice == 'RANDOMFOREST':
             classifier = RandomForestClassifier(random_state=seed, class_weight='balanced')
+
+        # init recursive feature eliminator
+        rfe = RFECV(estimator=classifier,
+                    step=1,
+                    cv=StratifiedKFold(3),
+                    scoring=make_scorer(roc_auc_score),
+                    min_features_to_select=1)
 
         # load features
         with open(MODELPATH / 'num_features.pkl','rb') as f:
@@ -109,7 +121,7 @@ def run_ml_app():
         # Create preprocessing and training pipeline
         pipeline = Pipeline(steps=[
                                 ('preprocessor', preprocessor),
-                                ('classifier', classifier)
+                                ('rfe', rfe)
                                 ]
                             )
 
@@ -151,7 +163,7 @@ def run_ml_app():
                 pipeline = joblib.load(f)
 
             # make predictions
-            y_scores = pipeline.predict_proba(df[num_features + cat_features])
+            y_scores = pipeline.predict_proba(df)
             print('predicted credit default scores: ', y_scores[:,1])
             
             # append predictions to df

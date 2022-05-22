@@ -16,7 +16,7 @@ MODELPATH = Path(rootdir) / "model"
 def run_explain_app():
     # load a sample of the testing dataset
     with open(DATAPATH / 'df_test.pkl','rb') as f:
-        df_test = joblib.load(f).sample(100)
+        df_test = joblib.load(f).sample(250)
     # load features
     with open(MODELPATH / 'num_features.pkl','rb') as f:
         num_features = joblib.load(f)
@@ -29,6 +29,10 @@ def run_explain_app():
             pipeline = joblib.load(f)
             # get encoded categorical feature names
             cat_features_enc = get_categorical_feature_names_encoded(pipeline, 'onehotencode', cat_features)
+            # feature names after hotencoding 
+            feature_names = num_features + cat_features_enc
+            # get relevant feautures 
+            relevant_features = pipeline['rfe'].get_feature_names_out(feature_names)
     except FileNotFoundError as e:
         st.error("""Please train the model first.""")
 
@@ -40,7 +44,7 @@ def run_explain_app():
         with st.spinner('calculating shapley values...'):        
 
             # init shap explainer
-            explainer = shap.explainers.Permutation(model = pipeline['classifier'].predict,
+            explainer = shap.explainers.Permutation(model = pipeline['rfe'].predict,
                                                     masker = pipeline['preprocessor'].transform(df_test), 
                                                     feature_names = num_features + cat_features_enc,
                                                     max_evals=1000)
@@ -61,8 +65,9 @@ def run_explain_app():
             st.error("""Please calculate the shapley values first.""")
         
         # bar plot 
-        shap.plots.bar(shap_values, 
-                       show=False)
+        shap.plots.bar(shap_values,
+                        max_display=len(relevant_features), 
+                        show=False)
         fig = plt.gcf()
         ax = plt.gca()
         ax.set_title('Feature importance')
@@ -78,7 +83,8 @@ def run_explain_app():
             st.error("""Please calculate the shapley values first.""")
         
         # bar plot 
-        shap.plots.beeswarm(shap_values, 
+        shap.plots.beeswarm(shap_values,
+                            max_display=len(relevant_features), 
                             show=False)
         fig = plt.gcf()
         ax = plt.gca()
@@ -104,9 +110,9 @@ def run_explain_app():
                             shap_values = shap_values.values, 
                             features = pd.DataFrame(data = pipeline['preprocessor'].transform(df_test), 
                                                     columns = num_features + cat_features_enc),
-                            x_jitter = 0.5,
-                            xmin="percentile(5.0)",
-                            xmax="percentile(95.0)", 
+                            x_jitter = 0.2,
+                            xmin="percentile(2.5)",
+                            xmax="percentile(97.5)", 
                             interaction_index=None,
                             title = 'SHAP Dependence Plot: SHAP Value vs {}'.format(feat),
                             ax=ax,

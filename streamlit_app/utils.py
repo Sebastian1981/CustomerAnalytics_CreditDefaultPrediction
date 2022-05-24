@@ -88,7 +88,7 @@ def get_shap_values_list(pipeline, feature_names, dataframe:pd.DataFrame, row_se
     shap_values_list = [] # collect n shap values for calculating the mean and standard deviation
     for n in range(number_random_samples):
         # get data sample
-        data = dataframe.sample(100) 
+        data = dataframe.sample(100, replace=True) 
         # init shap explainer
         explainer = shap.explainers.Permutation(model=pipeline['rfe'].predict,
                                                 masker=pipeline['preprocessor'].transform(data), 

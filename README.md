@@ -30,3 +30,17 @@ The receiver-operating characteristics is interesting in terms that the false-po
 The precision-recall curve confirms that achieving a recall of 50% comes in for free in terms that the precision starts decreasing only when the recall is above 50%. An efficient set point would be to chose a recall of around 80% and thus allowing the precision to drop to around 80%. However, optimizing the tradeoff between recall and precision requires profound business knowlede in terms of the costs of false-positive and false-negative predictions.  
 
 ![precision recall](images/model_eval_04.PNG)
+
+
+## Model Explainability
+The web application allows the user to easily visualize the overall feature importance as shown below. We can see that the overall most important feature is the income explaining 13% on average of the credit defaulting risk. 
+
+![shap bar plot](images/shap_feature_importance.PNG)
+
+Having a closer look at e.g. the dependence of the credit default risk in dependence of the income reveals that lower incomes correlates with higher credit defaulting risks, which is in consistence with the finding above (see EDA section).
+
+![shap bar plot](images/shap_feature_importance_2.PNG)
+
+Using a game theoretical approach allows us to also explore the machine leaning model decision making process for a single customer, as shown below. In this particular case, the model predicted 100% credit default risk. It shows that the most important factors were the type of credit, the income and the loan amount. All three factors significantly pushed the predicted credit default risk to higher values. 
+
+![shap bar plot](images/shap_single_decision.PNG)

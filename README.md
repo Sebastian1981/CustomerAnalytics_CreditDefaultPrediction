@@ -10,9 +10,9 @@ The distribution of the target variable shows a class imbalance having around 20
 
 The web application let´s you easily select particular features to be displayed in terms of their distriutions, as shown below. For example, from the boxplots for the income variable can be seen that the risk for credit default is higher for lower incomes, as can be expected.
 
-![numeric feature distribution](/images/numeric_feature_distribution.png)
+![numeric feature distribution](/images/numeric_feature_distribution.PNG)
 
 The figure below shows the credit default distribution stratified by gender.
 
-![categorical feature distribution](/images/categorical_feature_distribution.png)
+![categorical feature distribution](/images/categorical_feature_distribution.PNG)
 

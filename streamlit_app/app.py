@@ -71,6 +71,8 @@ Path(DATAPATH).mkdir(parents=True, exist_ok=True)
 Path(MODELPATH).mkdir(parents=True, exist_ok=True)
 
 
+print('about path: ', Path('About.md').read_text())
+
 def main():
     st.title("Let´s predict credit defaults!")
 
@@ -79,6 +81,7 @@ def main():
 
     if choice == "About":
         st.subheader("About")
+        st.markdown(Path('About.md').read_text())
 
     elif choice == "EDA":
         st.subheader('Exploratory Data Analysis')

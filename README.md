@@ -1,7 +1,26 @@
-# Credit Default Prediction with Machine Learning
+# Credit Default Prediction App
 
 ## Project Overview
-The purpose of this AI project is to predict the risk that individuals will default on their loan repayments. The basis for this is freely accessible data from the world wide web. First, the feasibility of implementing the question using machine learning algorithms was examined. The implementation for this is in the various Jupyter notebooks. A web application was then implemented, which allows the user to visualize the underlying data with simple menu navigation, and then to train and evaluate machine learning models. In addition, an approach from game theory was implemented here to make model decisions transparent by visualizing the so-called Shapley values.
+The purpose of this AI project was to build an application to predict the risk that individuals will default on their loan repayments. The basis for this is freely accessible data from the world wide web. First, the feasibility of implementing the question using machine learning algorithms was examined. The implementation for this is in the various Jupyter notebooks. A web application was then implemented, which allows the user to visualize the underlying data with simple menu navigation, and then to train and evaluate machine learning models. In addition, an approach from game theory was implemented here to make model decisions transparent by visualizing the so-called Shapley values.
+
+## Setup the Environment to run the JupyterNotebooks and the APP
+- $conda create -n myenv python=3.8.13
+- $conda active myenv
+- $pip install -r requirements.txt
+
+## App Overview
+The app is basically structured in the way machine learning projects are commonly organized. The user can choose between five different sections like exploratory data analysis (EDA), machine learning (ML), model evaluation (Eval) and model explainability (Explain).
+
+![app overview](/images/app_menu.png)
+
+The data is uploaded and analyzed in the EDA section. The machine learning model is selected and trained in the ML section. New data is scored here and can be downloaded. 
+
+![app overview](/images/app_menu_ml.png)
+
+Model´s performance metrics are evaluated in the Eval section. Model´s decisions are analyzed in the Explain section.
+
+![app overview](/images/app_menu_ml_2.png)
+
 
 ## Exploratory Data Analysis
 The distribution of the target variable shows a class imbalance having around 20% loan repayment defaulters. This class imbalance was considered for modeling in order to achieve optimal model performances.
